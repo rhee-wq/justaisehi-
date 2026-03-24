@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Corner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sage: #b2ac88;
+            --cream: #f9f7f2;
+            --pastel-pink: #fce4ec;
+            --cat-color: #8d6e63;
+            --text: #5d4037;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--cream);
+            color: var(--text);
+            overflow-x: hidden;
+            transition: background 1s ease;
+        }
+
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        .page {
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hidden { display: none; }
+
+        button {
+            background-color: var(--sage);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: #8e896b;
+            transform: scale(1.05);
+        }
+
+        /* CAT PEEKING */
+        .peeking-cat {
+            position: fixed;
+            bottom: -80px;
+            left: 5vw;
+            width: 150px;
+            height: 150px;
+            background: var(--cat-color);
+            border-radius: 75px 75px 0 0;
+            transition: transform 1s ease-in-out;
+            z-index: 10;
+        }
+        .peeking-cat::before, .peeking-cat::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            width: 40px;
+            height: 40px;
+            background: var(--cat-color);
+            border-radius: 5px;
+            transform: rotate(45deg);
+        }
+        .peeking-cat::before { left: 15px; }
+        .peeking-cat::after { right: 15px; }
+        .cat-eyes {
+            position: absolute;
+            top: 40px;
+            left: 30px;
+            display: flex;
+            gap: 40px;
+        }
+        .eye {
+            width: 15px;
+            height: 15px;
+            background: #4e342e;
+            border-radius: 50%;
+            animation: slowBlink 7s infinite ease-in-out;
+        }
+        @keyframes slowBlink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        /* 3D FLIP HEARTS */
+        .heart-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            perspective: 1000px;
+        }
+        .flip-card {
+            background-color: transparent;
+            width: 120px;
+            height: 120px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .flip-front { background-color: var(--pastel-pink); font-size: 40px; }
+        .flip-back { background-color: var(--sage); color: white; transform: rotateY(180deg); font-size: 14px; }
+
+        /* NIGHT SKY */
+        .night-sky {
+            background: radial-gradient(circle at bottom, #1B2735 0%, #090A0F 100%);
+            color: white !important;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* NORMAL PASTEL HEARTS FOR GAME */
+        .game-container {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed var(--sage);
+            cursor: none;
+            margin: 20px auto;
+        }
+        .basket {
+            width: 80px;
+            height: 20px;
+            background-color: var(--sage);
+            position: absolute;
+            bottom: 10px;
+            border-radius: 10px;
+        }
+        .falling-heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            transform: rotate(-45deg);
+        }
+        .falling-heart::before, .falling-heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: inherit;
+        }
+        .falling-heart::before { top: -10px; left: 0; }
+        .falling-heart::after { left: 10px; top: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="welcomeCat" class="peeking-cat">
+        <div class="cat-eyes"><div class="eye"></div><div class="eye"></div></div>
+    </div>
+
+    <div id="welcome" class="page">
+        <h1>Hello "brotherr". I made this for you.</h1>
+        <p>This is a small corner of the internet that belongs only to you.</p>
+        <button onclick="showHearts()">Continue</button>
+    </div>
+
+    <div id="hearts" class="page hidden" style="background-color: #f1f2ed;">
+        <h2>Tap each heart...</h2>
+        <div class="heart-grid" id="heartGrid"></div>
+        <button onclick="showNightSky()">Next</button>
+    </div>
+
+    <div id="night" class="page hidden night-sky">
+        <div id="starField"></div>
+        <h2 style="z-index: 1;">O my winter sun, </h2>
+        <p style="z-index: 1; max-width: 80%; font-family: 'Playfair Display', serif;">
+            Even when the world is loud, you are a steady, beautiful light.
+        </p>
+        <button onclick="showGame()" style="background: white; color: #1B2735; z-index: 1;">Enter the game</button>
+    </div>
+
+    <div id="game" class="page hidden" style="background-color: var(--pastel-pink);">
+        <h2>Catch 5 hearts!</h2>
+        <div id="score" style="color: var(--sage); margin-bottom: 10px;">Hearts Caught: 0</div>
+        <div class="game-container" id="gameArea">
+            <div class="basket" id="basket"></div>
+        </div>
+        <button onclick="showFinalPage()" id="finishBtn" class="hidden">Finish</button>
+    </div>
+
+    <div id="final" class="page hidden">
+        <h2>Remember this corner.</h2>
+        <p>On days when you feel sad, come back here and remember that you are very important.</p>
+        <p style="font-size: 30px;"></p>
+    </div>
+
+    <script>
+        function showHearts() {
+            document.getElementById('welcomeCat').style.transform = 'translateY(150px)';
+            document.getElementById('welcome').classList.add('hidden');
+            document.getElementById('hearts').classList.remove('hidden');
+            createHearts();
+        }
+
+        function createHearts() {
+            const grid = document.getElementById('heartGrid');
+            if (grid.children.length > 0) return;
+            const reasons = ["You have the purest soul", "You have the warmest aura", "Your laughter is contagious", "You are a ray of sunshine", "You have the biggest heart"];
+            reasons.forEach(text => {
+                const card = document.createElement('div');
+                card.className = 'flip-card';
+                card.innerHTML = `<div class="flip-card-inner"><div class="flip-front">💖</div><div class="flip-back">${text}</div></div>`;
+                card.onclick = () => card.classList.toggle('flipped');
+                grid.appendChild(card);
+            });
+        }
+
+        function showNightSky() {
+            document.getElementById('hearts').classList.add('hidden');
+            document.getElementById('night').classList.remove('hidden');
+            const field = document.getElementById('starField');
+            for (let i = 0; i < 100; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                s.style.width = s.style.height = Math.random() * 3 + 'px';
+                s.style.left = Math.random() * 100 + 'vw';
+                s.style.top = Math.random() * 100 + 'vh';
+                s.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                field.appendChild(s);
+            }
+        }
+
+        function showGame() {
+            document.getElementById('night').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            const basket = document.getElementById('basket');
+            const area = document.getElementById('gameArea');
+            const scoreDiv = document.getElementById('score');
+            const colors = ['#b2e2f2', '#f2b2e2', '#e2f2b2', '#f2d9b2'];
+            let caught = 0;
+
+            area.onmousemove = (e) => {
+                let rect = area.getBoundingClientRect();
+                let x = e.clientX - rect.left - 40;
+                if (x >= 0 && x <= rect.width - 80) basket.style.left = x + 'px';
+            };
+
+            let spawner = setInterval(() => {
+                const h = document.createElement('div');
+                h.className = 'falling-heart';
+                h.style.background = colors[Math.floor(Math.random() * colors.length)];
+                h.style.left = Math.random() * 90 + '%';
+                h.style.top = '0px';
+                area.appendChild(h);
+
+                let fall = setInterval(() => {
+                    let top = parseInt(h.style.top);
+                    h.style.top = (top + 4) + 'px';
+                    let hr = h.getBoundingClientRect();
+                    let br = basket.getBoundingClientRect();
+
+                    if (hr.bottom >= br.top && hr.left >= br.left && hr.right <= br.right) {
+                        caught++;
+                        scoreDiv.innerText = `Hearts Caught: ${caught}`;
+                        h.remove(); clearInterval(fall);
+                        if (caught >= 5) { clearInterval(spawner); document.getElementById('finishBtn').classList.remove('hidden'); }
+                    }
+                    if (top > 400) { h.remove(); clearInterval(fall); }
+                }, 20);
+            }, 800);
+        }
+
+        function showFinalPage() {
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('final').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
